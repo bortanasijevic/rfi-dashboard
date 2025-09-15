@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RFI Dashboard
 
-## Getting Started
+A modern web application for tracking and managing Request for Information (RFI) items. Built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui components.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Data Management**: Loads RFI data from JSON (primary) with CSV fallback
+- **Interactive Table**: Sortable, searchable, and paginated data grid
+- **Conditional Formatting**: Color-coded days late indicators
+- **Actions**: Direct links to Procore and email reminders
+- **Real-time Updates**: Refresh button to fetch latest data
+- **Responsive Design**: Works on desktop and mobile devices
+- **Dark Mode Support**: Toggle between light and dark themes
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Place your data files** in the `/data` directory:
+   - `rfis_final.json` (primary data source)
+   - `rfis_final_with_days_late.csv` (fallback data source)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-## Learn More
+3. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Open your browser** to `http://localhost:3000`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Data Format
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The application expects RFI data with the following fields:
 
-## Deploy on Vercel
+- `number`: RFI number (string)
+- `subject`: RFI subject/title (string)
+- `status`: RFI status (string, optional)
+- `ball_in_court`: Responsible parties (string)
+- `due_date`: Due date (YYYY-MM-DD or timestamp)
+- `days_late`: Number of days late (number)
+- `last_change_of_court`: Last change timestamp (YYYY-MM-DD HH:MM or "N/A")
+- `days_in_court`: Days in current court ("N/A" or number as string)
+- `mailto_reminder`: Email reminder link (mailto: URL)
+- `link`: Procore RFI URL (string)
+- `last_reminder_date`: Last reminder date (string, usually empty)
+- `notes`: Additional notes (string, usually empty)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Customization
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Columns
+To modify the table columns, edit the `columns` array in `src/components/RfiTable.tsx`.
+
+### Styling
+- Days late colors can be adjusted in `src/lib/date.ts`
+- Global styles are in `src/app/globals.css`
+- Component styles use Tailwind CSS classes
+
+### Data Sources
+- Modify the data loading logic in `src/lib/loadRfis.ts`
+- Update the API route in `src/app/api/rfis/route.ts`
+
+## Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run type-check` - Run TypeScript type checking
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Components**: shadcn/ui
+- **Table**: TanStack Table
+- **Validation**: Zod
+- **Icons**: Lucide React
+
+## Security
+
+- No secrets are exposed to the client
+- API routes only read files from the `/data` directory
+- No direct calls to external APIs from the browser
+- All data validation is performed server-side
