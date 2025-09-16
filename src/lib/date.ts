@@ -63,10 +63,10 @@ export function getDaysLateStyling(daysLate: number): string {
   if (daysLate <= 0) {
     return '';
   } else if (daysLate < 3) {
-    return 'bg-yellow-50 text-yellow-900 dark:bg-yellow-900/30 dark:text-yellow-200';
+    return 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200';
   } else if (daysLate < 10) {
-    return 'bg-orange-50 text-orange-900 dark:bg-orange-900/30 dark:text-orange-200';
+    return 'bg-orange-200 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200';
   } else {
-    return 'bg-red-50 text-red-900 dark:bg-red-900/30 dark:text-red-200';
+    return 'bg-red-200 text-red-800 dark:bg-red-900/50 dark:text-red-200';
   }
 }

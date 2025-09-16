@@ -6,7 +6,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
   type ColumnDef,
@@ -40,6 +39,7 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastRefreshTime, setLastRefreshTime] = useState<string>('');
 
   const handlePowerfulRefresh = async () => {
     setIsRefreshing(true);
@@ -65,6 +65,9 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
       
       // 2) Re-fetch /api/rfis (your existing data loader)
       await onRefresh();
+      
+      // 3) Update the last refresh time
+      setLastRefreshTime(new Date().toLocaleString());
     } catch (error) {
       console.error('Refresh error:', error);
       alert('Failed to refresh data. Please try again.');
@@ -167,7 +170,7 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
             {getValue() === 'N/A' ? (
               <span className="text-muted-foreground">N/A</span>
             ) : (
-              formatDateTime(getValue())
+              formatDate(getValue())
             )}
           </div>
         ),
@@ -207,13 +210,13 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => window.open(row.original.mailto_reminder, '_self')}
+                    onClick={() => window.open(row.original.mailto_reminder, '_blank')}
                   >
                     <Mail className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Send Email</p>
+                  <p>Craft Email</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -232,7 +235,8 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    // Remove pagination - show all rows
+    // getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       globalFilter,
@@ -268,7 +272,7 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
         </div>
         <div className="flex items-center space-x-4">
           <div className="text-sm text-muted-foreground">
-            Last updated: {lastUpdated}
+            {lastRefreshTime ? `Last refreshed: ${lastRefreshTime}` : `Last updated: ${lastUpdated}`}
           </div>
           <Button 
             onClick={handlePowerfulRefresh} 
@@ -332,33 +336,10 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
         </Table>
       </div>
 
-      {/* Pagination */}
+      {/* Show total count */}
       <div className="flex items-center justify-between px-2">
         <div className="flex-1 text-sm text-muted-foreground">
-          Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{' '}
-          {Math.min(
-            (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-            table.getFilteredRowModel().rows.length
-          )}{' '}
-          of {table.getFilteredRowModel().rows.length} entries
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+          Showing {table.getFilteredRowModel().rows.length} entries
         </div>
       </div>
     </div>
