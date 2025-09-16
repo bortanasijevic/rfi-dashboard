@@ -39,6 +39,39 @@ const columnHelper = createColumnHelper<RfiRow>();
 export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handlePowerfulRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      // 1) Ask backend to run the exporter
+      const response = await fetch('/api/refresh', {
+        method: 'POST',
+        cache: 'no-store',
+        headers: {
+          'x-refresh-key': process.env.NEXT_PUBLIC_REFRESH_KEY || '',
+        },
+      });
+
+      const result = await response.json();
+      
+      if (!result.ok) {
+        console.error('Exporter failed:', result);
+        alert(`Exporter failed: ${result.stderr || 'Unknown error'}`);
+        return;
+      }
+
+      console.log('Exporter completed successfully');
+      
+      // 2) Re-fetch /api/rfis (your existing data loader)
+      await onRefresh();
+    } catch (error) {
+      console.error('Refresh error:', error);
+      alert('Failed to refresh data. Please try again.');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const columns = useMemo<ColumnDef<RfiRow>[]>(
     () => [
@@ -237,9 +270,14 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
           <div className="text-sm text-muted-foreground">
             Last updated: {lastUpdated}
           </div>
-          <Button onClick={onRefresh} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
+          <Button 
+            onClick={handlePowerfulRefresh} 
+            variant="outline" 
+            size="sm"
+            disabled={isRefreshing}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Running Exporter...' : 'Run Exporter & Refresh'}
           </Button>
         </div>
       </div>
