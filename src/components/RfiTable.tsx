@@ -14,7 +14,6 @@ import {
 import { ArrowUpDown, ExternalLink, Mail, Search, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   Table,
@@ -25,7 +24,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { type RfiRow } from '@/types/rfi';
-import { formatDate, formatDateTime, getDaysLateStyling } from '@/lib/date';
+import { formatDate, getDaysLateStyling } from '@/lib/date';
 
 interface RfiTableProps {
   data: RfiRow[];

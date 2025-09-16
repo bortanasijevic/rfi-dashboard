@@ -15,7 +15,7 @@ export function loadRfis(): RfiRow[] {
     const rawData = JSON.parse(jsonData);
     
     // Validate and transform the data
-    const validatedData = rawData.map((item: any) => {
+    const validatedData = rawData.map((item: Record<string, unknown>) => {
       // Transform the data to match our schema
       const transformed = {
         number: item.number,
@@ -36,8 +36,8 @@ export function loadRfis(): RfiRow[] {
     });
     
     return validatedData;
-  } catch (jsonError) {
-    console.log('JSON file not found or invalid, trying CSV fallback...');
+    } catch (error) {
+      console.log('JSON file not found or invalid, trying CSV fallback...', error);
     
     try {
       // Fallback to CSV file
@@ -48,7 +48,7 @@ export function loadRfis(): RfiRow[] {
       
       const csvRows = lines.slice(1).map(line => {
         const values = line.split(',');
-        const row: any = {};
+        const row: Record<string, string> = {};
         
         headers.forEach((header, index) => {
           let value = values[index] || '';
