@@ -37,7 +37,7 @@ export function DemoRfiTable({ data, lastUpdated }: DemoRfiTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
 
-  const columns = useMemo<ColumnDef<RfiRow>[]>(
+  const columns = useMemo<ColumnDef<RfiRow, any>[]>(
     () => [
       columnHelper.accessor('number', {
         header: ({ column }) => (

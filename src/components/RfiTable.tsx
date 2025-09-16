@@ -75,7 +75,7 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
     }
   };
 
-  const columns = useMemo<ColumnDef<RfiRow>[]>(
+  const columns = useMemo<ColumnDef<RfiRow, any>[]>(
     () => [
       columnHelper.accessor('number', {
         header: ({ column }) => (
