@@ -41,8 +41,9 @@ export function formatDateTime(dateInput: string | number | undefined): string {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-    hour: '2-digit',
+    hour: 'numeric',
     minute: '2-digit',
+    hour12: true
   });
 }
 

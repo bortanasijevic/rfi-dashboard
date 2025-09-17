@@ -53,7 +53,21 @@ export function ProtectedDashboard() {
       
       const result = await response.json();
       setData(result.rows);
-      setLastUpdated(getLastUpdatedTimestamp(result.rows));
+      
+      // Try to get the last refresh timestamp, fallback to data timestamp
+      try {
+        const timestampResponse = await fetch('/api/last-refresh', {
+          cache: 'no-store',
+        });
+        if (timestampResponse.ok) {
+          const timestampData = await timestampResponse.json();
+          setLastUpdated(timestampData.lastRefresh);
+        } else {
+          setLastUpdated(getLastUpdatedTimestamp(result.rows));
+        }
+      } catch {
+        setLastUpdated(getLastUpdatedTimestamp(result.rows));
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
       setData([]);

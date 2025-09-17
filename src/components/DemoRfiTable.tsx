@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/table';
 import { type RfiRow } from '@/types/rfi';
 import { formatDate, getDaysLateStyling } from '@/lib/date';
+import { DemoNoteCell } from '@/components/DemoNoteCell';
 
 interface DemoRfiTableProps {
   data: RfiRow[];
@@ -142,6 +143,16 @@ export function DemoRfiTable({ data, lastUpdated }: DemoRfiTableProps) {
           <div className={getValue() === 'N/A' ? 'text-muted-foreground' : ''}>
             {getValue()}
           </div>
+        ),
+      }),
+      columnHelper.accessor('notes', {
+        header: 'Notes',
+        cell: ({ getValue, row }) => (
+          <DemoNoteCell 
+            value={getValue() || ''}
+            rfiNumber={row.original.number}
+            rfiSubject={row.original.subject}
+          />
         ),
       }),
       columnHelper.display({

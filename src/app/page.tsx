@@ -10,11 +10,17 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState('Loading...');
 
-  const fetchData = async () => {
+  const fetchData = async (cleanupNotes = false) => {
     try {
       setLoading(true);
+      const headers: Record<string, string> = {};
+      if (cleanupNotes) {
+        headers['x-cleanup-notes'] = 'true';
+      }
+      
       const response = await fetch('/api/rfis', {
         cache: 'no-store',
+        headers,
       });
       
       if (!response.ok) {
@@ -30,6 +36,25 @@ export default function Home() {
       setLastUpdated('Error loading data');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Separate function for refreshing data without updating timestamp
+  const refreshDataOnly = async () => {
+    try {
+      const response = await fetch('/api/rfis', {
+        cache: 'no-store',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      
+      const result = await response.json();
+      setData(result.rows);
+      // Don't update lastUpdated timestamp for note-only refreshes
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -63,6 +88,7 @@ export default function Home() {
         <RfiTable 
           data={data} 
           onRefresh={fetchData}
+          onDataRefresh={refreshDataOnly}
           lastUpdated={lastUpdated}
         />
       </div>

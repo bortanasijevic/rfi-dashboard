@@ -25,20 +25,29 @@ import {
 } from '@/components/ui/table';
 import { type RfiRow } from '@/types/rfi';
 import { formatDate, getDaysLateStyling } from '@/lib/date';
+import { NoteCell } from '@/components/NoteCell';
 
 interface RfiTableProps {
   data: RfiRow[];
-  onRefresh: () => void;
+  onRefresh: (cleanupNotes?: boolean) => void;
+  onDataRefresh?: () => void; // For note updates without timestamp change
   lastUpdated: string;
 }
 
 const columnHelper = createColumnHelper<RfiRow>();
 
-export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
+export function RfiTable({ data, onRefresh, onDataRefresh, lastUpdated }: RfiTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastRefreshTime, setLastRefreshTime] = useState<string>('');
+  const [lastRefreshTime, setLastRefreshTime] = useState<string>(new Date().toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  }));
 
   const handlePowerfulRefresh = async () => {
     setIsRefreshing(true);
@@ -62,11 +71,18 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
 
       console.log('Exporter completed successfully');
       
-      // 2) Re-fetch /api/rfis (your existing data loader)
-      await onRefresh();
+      // 2) Re-fetch /api/rfis with cleanup (your existing data loader)
+      await onRefresh(true);
       
       // 3) Update the last refresh time
-      setLastRefreshTime(new Date().toLocaleString());
+      setLastRefreshTime(new Date().toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      }));
     } catch (error) {
       console.error('Refresh error:', error);
       alert('Failed to refresh data. Please try again.');
@@ -182,6 +198,24 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
           </div>
         ),
       }),
+      columnHelper.accessor('notes', {
+        header: 'Notes',
+        cell: ({ getValue, row }) => (
+          <NoteCell 
+            value={getValue() || ''}
+            rfiNumber={row.original.number}
+            rfiSubject={row.original.subject}
+            onSave={async (note) => {
+              // After saving note, refresh data without updating timestamp
+              if (onDataRefresh) {
+                await onDataRefresh();
+              } else {
+                await onRefresh();
+              }
+            }}
+          />
+        ),
+      }),
       columnHelper.display({
         id: 'actions',
         header: 'Actions',
@@ -245,11 +279,13 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
       const number = row.getValue('number') as string;
       const subject = row.getValue('subject') as string;
       const ballInCourt = row.getValue('ball_in_court') as string;
+      const notes = row.getValue('notes') as string;
       
       return (
         number.toLowerCase().includes(searchValue) ||
         subject.toLowerCase().includes(searchValue) ||
-        ballInCourt.toLowerCase().includes(searchValue)
+        ballInCourt.toLowerCase().includes(searchValue) ||
+        notes.toLowerCase().includes(searchValue)
       );
     },
   });
@@ -271,7 +307,7 @@ export function RfiTable({ data, onRefresh, lastUpdated }: RfiTableProps) {
         </div>
         <div className="flex items-center space-x-4">
           <div className="text-sm text-muted-foreground">
-            {lastRefreshTime ? `Last refreshed: ${lastRefreshTime}` : `Last updated: ${lastUpdated}`}
+            {lastRefreshTime ? `Last refreshed: ${lastRefreshTime}` : `Data loaded: ${lastUpdated}`}
           </div>
           <Button 
             onClick={handlePowerfulRefresh} 
