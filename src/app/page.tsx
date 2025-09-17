@@ -9,6 +9,15 @@ export default function Home() {
   const [data, setData] = useState<RfiRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState('Loading...');
+  const [lastRefreshTime, setLastRefreshTime] = useState<string>('');
+
+  // Load saved refresh time on component mount
+  useEffect(() => {
+    const savedRefreshTime = localStorage.getItem('rfi-last-refresh-time');
+    if (savedRefreshTime) {
+      setLastRefreshTime(savedRefreshTime);
+    }
+  }, []);
 
   const fetchData = async (cleanupNotes = false) => {
     try {
@@ -29,7 +38,10 @@ export default function Home() {
       
       const result = await response.json();
       setData(result.rows);
-      setLastUpdated(getLastUpdatedTimestamp(result.rows));
+      // Only update lastUpdated on initial load, not on subsequent fetches
+      if (!lastRefreshTime) {
+        setLastUpdated(getLastUpdatedTimestamp(result.rows));
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
       setData([]);
@@ -37,6 +49,22 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Function specifically for the refresh button (updates timestamp)
+  const fetchDataWithTimestamp = async () => {
+    await fetchData(true); // Include cleanup
+    const newRefreshTime = new Date().toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+    setLastRefreshTime(newRefreshTime);
+    // Save to localStorage so it persists across page reloads
+    localStorage.setItem('rfi-last-refresh-time', newRefreshTime);
   };
 
   // Separate function for refreshing data without updating timestamp
@@ -87,9 +115,9 @@ export default function Home() {
         
         <RfiTable 
           data={data} 
-          onRefresh={fetchData}
+          onRefresh={fetchDataWithTimestamp}
           onDataRefresh={refreshDataOnly}
-          lastUpdated={lastUpdated}
+          lastUpdated={lastRefreshTime || lastUpdated}
         />
       </div>
     </div>

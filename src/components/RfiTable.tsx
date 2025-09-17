@@ -40,14 +40,6 @@ export function RfiTable({ data, onRefresh, onDataRefresh, lastUpdated }: RfiTab
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastRefreshTime, setLastRefreshTime] = useState<string>(new Date().toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  }));
 
   const handlePowerfulRefresh = async () => {
     setIsRefreshing(true);
@@ -71,18 +63,8 @@ export function RfiTable({ data, onRefresh, onDataRefresh, lastUpdated }: RfiTab
 
       console.log('Exporter completed successfully');
       
-      // 2) Re-fetch /api/rfis with cleanup (your existing data loader)
-      await onRefresh(true);
-      
-      // 3) Update the last refresh time
-      setLastRefreshTime(new Date().toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      }));
+      // 2) Re-fetch /api/rfis with cleanup and update timestamp
+      await onRefresh();
     } catch (error) {
       console.error('Refresh error:', error);
       alert('Failed to refresh data. Please try again.');
@@ -307,7 +289,7 @@ export function RfiTable({ data, onRefresh, onDataRefresh, lastUpdated }: RfiTab
         </div>
         <div className="flex items-center space-x-4">
           <div className="text-sm text-muted-foreground">
-            {lastRefreshTime ? `Last refreshed: ${lastRefreshTime}` : `Data loaded: ${lastUpdated}`}
+            Last refreshed: {lastUpdated}
           </div>
           <Button 
             onClick={handlePowerfulRefresh} 

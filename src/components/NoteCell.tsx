@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit3, FileText } from 'lucide-react';
+import { Edit3, FileText, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { NoteModal } from '@/components/NoteModal';
@@ -15,6 +15,7 @@ interface NoteCellProps {
 
 export function NoteCell({ value, rfiNumber, rfiSubject, onSave }: NoteCellProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleSaveNote = async (note: string) => {
     await fetch('/api/notes', {
@@ -31,6 +32,30 @@ export function NoteCell({ value, rfiNumber, rfiSubject, onSave }: NoteCellProps
     await onSave(note);
   };
 
+  const handleDeleteNote = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening modal
+    setIsDeleting(true);
+    
+    try {
+      await fetch('/api/notes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          rfiNumber,
+          note: '', // Empty note = delete
+        }),
+      });
+      
+      await onSave('');
+    } catch (error) {
+      console.error('Error deleting note:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const hasNote = value && value.trim().length > 0;
   const displayText = value.length > 50 ? `${value.substring(0, 47)}...` : value;
 
@@ -38,16 +63,16 @@ export function NoteCell({ value, rfiNumber, rfiSubject, onSave }: NoteCellProps
     <>
       <div className="flex items-center gap-2 min-w-[200px]">
         <div 
-          className="flex-1 cursor-pointer p-2 rounded border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-colors"
+          className="flex-1 cursor-pointer p-2 rounded border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-colors relative group"
           onClick={() => setIsModalOpen(true)}
         >
           {hasNote ? (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 pr-6">
                     <FileText className="h-4 w-4 text-gray-600" />
-                    <span className="text-sm">{displayText}</span>
+                    <span className="text-sm flex-1 truncate">{displayText}</span>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-[300px]">
@@ -60,6 +85,26 @@ export function NoteCell({ value, rfiNumber, rfiSubject, onSave }: NoteCellProps
               <Edit3 className="h-4 w-4" />
               <span className="text-sm">Add note...</span>
             </div>
+          )}
+          
+          {/* Delete button - only show when there's a note */}
+          {hasNote && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={handleDeleteNote}
+                    disabled={isDeleting}
+                    className="absolute right-1 top-1/2 transform -translate-y-1/2 p-1 rounded hover:bg-red-100 text-gray-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Delete note</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
       </div>
