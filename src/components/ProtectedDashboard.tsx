@@ -106,7 +106,7 @@ export function ProtectedDashboard() {
           </div>
           <div className="text-right">
             <p className="text-sm text-muted-foreground">
-              Demo Version - Data updates hourly
+              Demo Version
             </p>
             <button
               onClick={() => {
