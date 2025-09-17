@@ -22,11 +22,11 @@ export function DemoNoteCell({ value, rfiNumber, rfiSubject }: DemoNoteCellProps
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const hasNote = value && value.trim().length > 0;
-  const displayText = value.length > 40 ? `${value.substring(0, 37)}...` : value;
+  const displayText = value.length > 30 ? `${value.substring(0, 27)}...` : value;
 
   if (!hasNote) {
     return (
-      <div className="flex items-center gap-2 min-w-[150px] max-w-[200px]">
+      <div className="flex items-center gap-2 w-[180px]">
         <div className="flex-1 p-2 text-muted-foreground text-sm">
           —
         </div>
@@ -36,25 +36,24 @@ export function DemoNoteCell({ value, rfiNumber, rfiSubject }: DemoNoteCellProps
 
   return (
     <>
-      <div className="flex items-center gap-2 min-w-[150px] max-w-[200px]">
+      <div className="flex items-center gap-2 w-[180px]">
         <div 
-          className="flex-1 cursor-pointer p-2 rounded border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-colors"
+          className="flex-1 cursor-pointer p-2 rounded border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-colors overflow-hidden"
           onClick={() => setIsModalOpen(true)}
         >
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-full">
                   <FileText className="h-4 w-4 text-gray-600 flex-shrink-0" />
-                  <span className="text-sm truncate">{displayText}</span>
-                  {value.length > 40 && (
+                  <span className="text-sm truncate flex-1">{displayText}</span>
+                  {value.length > 30 && (
                     <Eye className="h-3 w-3 text-gray-400 flex-shrink-0" />
                   )}
                 </div>
               </TooltipTrigger>
               <TooltipContent className="max-w-[300px]">
                 <p className="whitespace-pre-wrap">{value}</p>
-                <p className="text-xs text-muted-foreground mt-1">Click to view in modal</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
