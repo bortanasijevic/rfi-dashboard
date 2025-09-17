@@ -293,9 +293,9 @@ export function RfiTable({ data, onRefresh, onDataRefresh, lastUpdated }: RfiTab
           </div>
           <Button 
             onClick={handlePowerfulRefresh} 
-            variant="outline" 
             size="sm"
             disabled={isRefreshing}
+            className="bg-[var(--domaco-red)] hover:bg-[var(--domaco-red-hover)] text-white border-0"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
             {isRefreshing ? 'Running Exporter...' : 'Run Exporter & Refresh'}

@@ -95,30 +95,44 @@ export function ProtectedDashboard() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">RFI Dashboard</h1>
-            <p className="text-muted-foreground">
-              Track and manage Request for Information (RFI) items
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">
-              Demo Version
-            </p>
-            <button
-              onClick={() => {
-                sessionStorage.removeItem('rfi-dashboard-auth');
-                setIsAuthenticated(false);
-              }}
-              className="text-sm text-blue-600 hover:text-blue-800 underline"
-            >
-              Sign Out
-            </button>
+    <div className="min-h-screen bg-[var(--domaco-light-gray)]">
+      {/* Header with company branding */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <img 
+                src="/images/Domaco-Encocorp-Projects-1.png" 
+                alt="Domaco-Encocorp" 
+                className="h-16 w-auto"
+              />
+              <div>
+                <h1 className="text-4xl font-bold tracking-tight text-[var(--domaco-gray)]">RFI Dashboard</h1>
+                <p className="text-[var(--domaco-gray)] text-lg font-medium">
+                  Request for Information Management System
+                </p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-[var(--domaco-gray)] font-medium">
+                Demo Version
+              </p>
+              <button
+                onClick={() => {
+                  sessionStorage.removeItem('rfi-dashboard-auth');
+                  setIsAuthenticated(false);
+                }}
+                className="text-sm text-[var(--domaco-red)] hover:text-[var(--domaco-red-hover)] underline font-medium"
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
         </div>
+      </div>
+
+      {/* Main content */}
+      <div className="container mx-auto py-8 px-4">
         
         {/* Demo version - no refresh button */}
         <DemoRfiTable 

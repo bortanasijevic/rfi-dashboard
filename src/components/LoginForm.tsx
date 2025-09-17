@@ -26,11 +26,18 @@ export function LoginForm({ onLogin, error }: LoginFormProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">RFI Dashboard</CardTitle>
-          <CardDescription>
+    <div className="min-h-screen flex items-center justify-center bg-[var(--domaco-light-gray)] py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader className="text-center space-y-4">
+          <div className="flex justify-center">
+            <img 
+              src="/images/Domaco-Encocorp-Projects-1.png" 
+              alt="Domaco-Encocorp" 
+              className="h-12 w-auto"
+            />
+          </div>
+          <CardTitle className="text-2xl font-bold text-[var(--domaco-gray)]">RFI Dashboard</CardTitle>
+          <CardDescription className="text-[var(--domaco-gray)]">
             Enter the password to access the dashboard
           </CardDescription>
         </CardHeader>
@@ -51,7 +58,7 @@ export function LoginForm({ onLogin, error }: LoginFormProps) {
             </div>
             <Button 
               type="submit" 
-              className="w-full"
+              className="w-full bg-[var(--domaco-red)] hover:bg-[var(--domaco-red-hover)] text-white border-0"
               disabled={isLoading || !password.trim()}
             >
               {isLoading ? 'Signing in...' : 'Access Dashboard'}

@@ -120,3 +120,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Domaco-Encocorp Brand Colors */
+:root {
+  --domaco-red: #B91C1C; /* Company red from logo */
+  --domaco-red-hover: #991B1B; /* Darker red for hover states */
+  --domaco-gray: #4B5563; /* Professional gray */
+  --domaco-light-gray: #F9FAFB; /* Light background gray */
+}
+
+.dark {
+  --domaco-red: #DC2626; /* Slightly lighter red for dark mode */
+  --domaco-red-hover: #B91C1C;
+}
