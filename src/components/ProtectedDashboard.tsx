@@ -6,7 +6,7 @@ import { DemoRfiTable } from '@/components/DemoRfiTable';
 import { type RfiRow } from '@/types/rfi';
 import { getLastUpdatedTimestamp } from '@/lib/date';
 
-const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD || 'rfi2024demo';
+const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD || 'rfi2025demo';
 
 export function ProtectedDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
