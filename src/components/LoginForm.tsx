@@ -33,7 +33,7 @@ export function LoginForm({ onLogin, error }: LoginFormProps) {
             <img 
               src="/images/Domaco-Encocorp-Projects-1.png" 
               alt="Domaco-Encocorp" 
-              className="h-12 w-auto"
+              className="h-16 w-auto"
             />
           </div>
           <CardTitle className="text-2xl font-bold text-[var(--domaco-gray)]">RFI Dashboard</CardTitle>

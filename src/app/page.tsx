@@ -108,14 +108,14 @@ export default function Home() {
       {/* Header with company branding */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-8">
             <img 
               src="/images/Domaco-Encocorp-Projects-1.png" 
               alt="Domaco-Encocorp" 
-              className="h-16 w-auto"
+              className="h-20 w-auto"
             />
-            <div>
-              <h1 className="text-4xl font-bold tracking-tight text-[var(--domaco-gray)]">RFI Dashboard</h1>
+            <div className="flex flex-col justify-center">
+              <h1 className="text-4xl font-bold tracking-tight text-[var(--domaco-gray)] mb-1">RFI Dashboard</h1>
               <p className="text-[var(--domaco-gray)] text-lg font-medium">
                 Request for Information Management System
               </p>
