@@ -8,11 +8,20 @@ export function formatDate(dateInput: string | number | undefined): string {
   let date: Date;
   
   if (typeof dateInput === 'number') {
-    // Handle timestamp (milliseconds)
+    // Handle timestamp (milliseconds) - treat as UTC and convert to local date
     date = new Date(dateInput);
+    // Create a new date using the UTC date components to avoid timezone shift
+    date = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
   } else {
-    // Handle string date
-    date = new Date(dateInput);
+    // Handle string date - parse as local date to avoid timezone issues
+    const dateStr = dateInput.toString();
+    if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      // For YYYY-MM-DD format, parse manually to avoid UTC interpretation
+      const [year, month, day] = dateStr.split('-').map(Number);
+      date = new Date(year, month - 1, day); // month is 0-indexed
+    } else {
+      date = new Date(dateInput);
+    }
   }
   
   if (isNaN(date.getTime())) return '';
